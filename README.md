@@ -2,7 +2,7 @@ VSCSVExport.kt
 ============
 
 
-VSCSVExport.kt is a simple Kotlin class that generates a CSV file and allows for sharing of the file.
+VSCSVExport.kt is a simple Kotlin class that creates a CSV file.
 
 
 Installation
@@ -32,11 +32,11 @@ Add `<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /
 opencsv
 -------
 
-Download opencsv from [sourceforge](https://sourceforge.net/projects/opencsv/?source=typ_redirect).
+Add `opencsv` to your `dependencies`.
 
-1. Copy the `jar` file to your `libs` directory.
-2. Change your folder structure in Android Studio from `Android` to `Project`.
-3. Right clock on the `jar` file and choose `Add as library`.
+```
+compile 'com.opencsv:opencsv:3.8'
+```
 
 Usage
 =====
@@ -44,5 +44,14 @@ Usage
 Use the method `exportCSV` to generates a CSV file and open the share intent.
 
 ```
-VSCSVExport().exportCSV("TestCSVFileName.csv", arrayOf("Title", "Other Title"), arrayOf(arrayOf("Apple", "iPhone X"), arrayOf("Google", "Pixel XL 2")), this, "Share CSV")
+VSCSVExport().exportCSV("TestCSVFileName.csv", arrayOf("Title", "Other Title"), arrayOf(arrayOf("Apple", "iPhone X"), arrayOf("Google", "Pixel XL 2"))) {  uriFromFile, error ->
+                if (error == VSCSVExportError.None) {
+                    val shareIntent = Intent(Intent.ACTION_SEND)
+                    shareIntent.type = "text/csv"
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, uriFromFile)
+                    this.startActivity(Intent.createChooser(shareIntent, "Share CSV"))
+                } else {
+                    print("Unspecified error when creating CSV file.")
+                }
+            }
 ```
