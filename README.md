@@ -55,3 +55,32 @@ VSCSVExport().exportCSV("TestCSVFileName.csv", arrayOf("Title", "Other Title"), 
                 }
             }
 ```
+
+Requesting Permissions
+--- 
+
+Add this method to your activity.
+
+```
+private fun isPermissionGrantedForStorage(activity: AppCompatActivity): Boolean {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (activity.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                return true
+            }
+            activity.requestPermissions(arrayOf<String>(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+            return false
+        } else {
+            return true
+        }
+    }
+```
+
+Use `isPermissionGrantedForStorage` to request permission if needed.
+
+```
+if (this.isPermissionGrantedForStorage(this)) {
+    // permission granted
+} else {
+    // permission not granted
+}
+```
