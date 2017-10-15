@@ -35,7 +35,7 @@ opencsv
 Add `opencsv` to your `dependencies`.
 
 ```
-compile 'com.opencsv:opencsv:3.8'
+compile 'com.opencsv:opencsv:4.0'
 ```
 
 Usage

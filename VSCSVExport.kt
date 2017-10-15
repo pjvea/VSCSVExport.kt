@@ -26,12 +26,13 @@ class VSCSVExport {
             writer.writeNext(row)
         }
 
-        if (writer.checkError()) {
+        try {
+            writer.flush()
+            return VSCSVExportResult.Success(file)
+        } catch (cause: Throwable) {
             return VSCSVExportResult.Error(Throwable("Write error."))
+        } finally {
+            writer.close()
         }
-
-        writer.close()
-
-        return VSCSVExportResult.Success(file)
     }
 }
