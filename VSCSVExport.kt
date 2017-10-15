@@ -1,4 +1,3 @@
-import android.net.Uri
 import com.opencsv.CSVWriter
 import java.io.File
 import java.io.FileWriter
@@ -15,13 +14,10 @@ sealed class VSCSVExportResult {
 
 class VSCSVExport {
     fun exportCSV(file: File, columnTitles: Array<String>, dataByRow: Array<Array<String>>): VSCSVExportResult {
-        val writer: CSVWriter
-
-        if (file.exists() && !file.isDirectory()) {
-            val fileWriter = FileWriter(file, false)
-            writer = CSVWriter(fileWriter)
+        val writer = if (file.exists() && !file.isDirectory()) {
+            CSVWriter(FileWriter(file, false))
         } else {
-            writer = CSVWriter(FileWriter(file))
+            CSVWriter(FileWriter(file))
         }
 
         writer.writeNext(columnTitles)
