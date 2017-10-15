@@ -30,7 +30,7 @@ class VSCSVExport {
             writer.flush()
             return VSCSVExportResult.Success(file)
         } catch (cause: Throwable) {
-            return VSCSVExportResult.Error(Throwable("Write error."))
+            return VSCSVExportResult.Error(cause)
         } finally {
             writer.close()
         }
