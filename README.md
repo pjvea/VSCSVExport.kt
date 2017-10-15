@@ -41,19 +41,23 @@ compile 'com.opencsv:opencsv:3.8'
 Usage
 =====
 
-Use the method `exportCSV` to generates a CSV file and open the share intent.
+Use the method `exportCSV` to create a CSV file.
 
 ```
-VSCSVExport().exportCSV("TestCSVFileName.csv", arrayOf("Title", "Other Title"), arrayOf(arrayOf("Apple", "iPhone X"), arrayOf("Google", "Pixel XL 2"))) {  uriFromFile, error ->
-                if (error == VSCSVExportError.None) {
-                    val shareIntent = Intent(Intent.ACTION_SEND)
-                    shareIntent.type = "text/csv"
-                    shareIntent.putExtra(Intent.EXTRA_STREAM, uriFromFile)
-                    this.startActivity(Intent.createChooser(shareIntent, "Share CSV"))
-                } else {
-                    print("Unspecified error when creating CSV file.")
-                }
-            }
+val directory = android.os.Environment.getExternalStorageDirectory().getAbsolutePath()
+val filePath = directory + File.separator + "TestCSVFileName.csv"
+val file = File(filePath)
+
+val result = VSCSVExport().exportCSV(file, arrayOf("Title", "Other Title"), arrayOf(arrayOf("Apple", "iPhone X"), arrayOf("Google", "Pixel XL 2")))
+
+if (result is VSCSVExportResult.Success) {
+    val shareIntent = Intent(Intent.ACTION_SEND)
+    shareIntent.type = "text/csv"
+    shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(result.file))
+    this.startActivity(Intent.createChooser(shareIntent, "Share CSV"))
+} else if (result is VSCSVExportResult.Error) {
+    print(result.cause)
+}
 ```
 
 Requesting Permissions

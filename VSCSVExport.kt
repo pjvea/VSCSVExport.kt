@@ -8,22 +8,20 @@ import java.io.FileWriter
  * Copyright © 2017 Vea Software. All rights reserved.
  */
 
-enum class VSCSVExportError {
-    WriteError, None
+sealed class VSCSVExportResult {
+    data class Success(val file: File): VSCSVExportResult()
+    data class Error(val cause: Throwable): VSCSVExportResult()
 }
 
 class VSCSVExport {
-    fun exportCSV(fileName: String, columnTitles: Array<String>, dataByRow: Array<Array<String>>, completion: (uriFromFile: Uri?, error: VSCSVExportError) -> Unit) {
-        val directory = android.os.Environment.getExternalStorageDirectory().getAbsolutePath()
-        val filePath = directory + File.separator + fileName
-        val file = File(filePath)
+    fun exportCSV(file: File, columnTitles: Array<String>, dataByRow: Array<Array<String>>): VSCSVExportResult {
         val writer: CSVWriter
 
         if (file.exists() && !file.isDirectory()) {
-            val fileWriter = FileWriter(filePath, false)
+            val fileWriter = FileWriter(file, false)
             writer = CSVWriter(fileWriter)
         } else {
-            writer = CSVWriter(FileWriter(filePath))
+            writer = CSVWriter(FileWriter(file))
         }
 
         writer.writeNext(columnTitles)
@@ -33,11 +31,11 @@ class VSCSVExport {
         }
 
         if (writer.checkError()) {
-            completion(null, VSCSVExportError.WriteError)
+            return VSCSVExportResult.Error(Throwable("Write error."))
         }
 
         writer.close()
 
-        completion(Uri.fromFile(file), VSCSVExportError.None)
+        return VSCSVExportResult.Success(file)
     }
 }
