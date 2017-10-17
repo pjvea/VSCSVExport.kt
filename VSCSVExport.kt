@@ -26,11 +26,11 @@ class VSCSVExport {
             writer.writeNext(row)
         }
 
-        try {
+        return try {
             writer.flush()
-            return VSCSVExportResult.Success(file)
+            VSCSVExportResult.Success(file)
         } catch (cause: Throwable) {
-            return VSCSVExportResult.Error(cause)
+            VSCSVExportResult.Error(cause)
         } finally {
             writer.close()
         }
